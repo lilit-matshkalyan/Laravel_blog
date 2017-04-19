@@ -1,0 +1,81 @@
+/*  Form loading  Icon */
+.form-loading{
+    width:150px;
+    display:none
+}
+
+/*  Form error message   */
+.error{
+    color:#b94a48;
+}
+
+/* pnotify */
+.ui-pnotify-closer, .ui-pnotify-sticker {
+    float: left !important;
+    margin-right: 0.2em !important;
+}
+
+/* modal */
+.modal-block .text-right button{
+    float:left !important;
+    margin: 0 5px !important;
+}
+.employee-picture{
+    color: transparent !important;
+    height: 35px !important;
+    width: 35px !important;
+}
+
+/* datatable  */
+.dt-buttons{
+    float:left !important;
+}
+
+/* calendar  */
+.nano-content{
+    right: 0 !important;
+}
+.datepicker-dropdown{
+    width: 200px  !important;
+    left: -271.833px !important;
+}
+
+/* Header */
+.header {
+    background: #fff !important;
+}
+@media (max-width: 1000px) {
+    .header .header-right {
+        margin-top: 0px  !important;
+    }
+    .header .logo-container {
+        height: 72px  !important;
+    }
+}
+
+/* Select2  */
+@media (max-width: 1000px) {
+    .select-with-add .select2-selection--single {
+        padding: 6px 97% 6px 12px !important;
+    }
+}
+
+/* jquery picture cut  */
+@media (min-width: 1000px) {
+    .container_photo_trable {
+        float: right;
+        width: 51%;
+    }
+}
+
+/* input type file  */
+input[type="file"]{
+    cursor: pointer;
+}
+
+
+/* Log in */
+.logo {
+    width: 160px;
+    margin-bottom: -60px;
+}

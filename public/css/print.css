@@ -1,0 +1,25 @@
+
+@font-face {
+    font-family: "ArabicFont";
+    src: url('GE_SS_Two_Bold/GE_SS_Two_Bold.eot');
+    src: url('GE_SS_Two_Bold/GE_SS_Two_Bold.eot?#iefix') format('embedded-opentype'),
+    url('GE_SS_Two_Bold/GE_SS_Two_Bold.woff') format('woff'),
+    url('GE_SS_Two_Bold/GE_SS_Two_Bold.ttf') format('truetype');
+}
+
+
+.rotate {
+    -ms-transform: rotate(270deg); /* IE 9 */
+    -webkit-transform: rotate(270deg); /* Safari */
+    transform: rotate(270deg);
+    width:18px !important;
+}
+
+@page{size:a4; margin:10px}
+@media print{
+    a, button, .noprint, {
+        display: none;
+    }    
+}
+
+
