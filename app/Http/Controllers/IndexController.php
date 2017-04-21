@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
 use App\Classes\Help;
 
+use App\Category;
+use App\Company;
+
 
 
 
@@ -23,12 +26,38 @@ class IndexController extends Controller
     {
         /*  Index view
          *  Written by Harout Koja
-         *  Date 1/Jun/2016
+         *  Date 20/Apr/2017
          *  Updated by
          *  Date
         */
 
-        return  view('index',['company'=>Help::company()]);
+
+        //  return categories with company
+        $categories = Category::all();
+
+        $i=0;
+        foreach($categories as $item){
+            $categories[$i]['company'] = $item->company;
+            $i++;
+        }
+
+        return  response()->json($categories);
+
+
+
+
+        // return companies with categories
+        $companies = Company::all();
+
+        $i=0;
+        foreach($companies as $item){
+            $companies[$i]['category'] =  $item->category;
+            $i++;
+        }
+
+        return  response()->json($companies);
+
+
     }
 
     /**
@@ -104,8 +133,5 @@ class IndexController extends Controller
 
     }
 
-    public function __construct() {
-        $this->middleware('auth');
-    }
 
 }

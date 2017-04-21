@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Job extends Model
+class Location extends Model
 {
     // Table Structure
-    protected $table = 'jobs';
+    protected $table = 'locations';
     protected $primaryKey = 'id';
 }

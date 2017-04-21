@@ -5,38 +5,15 @@ namespace App\Classes;
 use App\Http\Requests;
 use Auth;
 use Illuminate\Support\Facades\Hash;
-use Hijri_GregorianConvert;
-use datetime;
+use Datetime;
 use Request;
 use Redirect;
 use DB;
-use App\Language;
-use App\Settings;
 
 
 class Help
 {
-
-    // languages changer
-    public static function languages($text)
-    {
-        if(session('lang') == '-rtl') {
-            $rtl = Language::where('en',$text)->first();
-            return $rtl->ar;
-        }
-        else
-            $ltr = Language::where('en',$text)->first();
-                return $ltr->en;
-    }
-
-    // Company Data
-    public static function company()
-    {
-        $company = Settings::find(1);
-        return $company;
-    }
-
-    // check password strength with PHP
+     // check password strength with PHP
     public static function pass_check($pwd)
     {
 
@@ -64,20 +41,7 @@ class Help
             return substr($string, 0, $val - 3) . '...';
     }
    
-    // date convertor
-    public static function convert_date($date)
-    {
-        if ($date && $date < '1900-01-01') {
-            require_once "vendor/jquery.calendars.package-2.0.1/Hijri_Gregorian.php";
-            $DateConv = new Hijri_GregorianConvert;
-            $format = "YYYY-MM-DD";
-            $result = $DateConv->HijriToGregorian($date, $format);
-            return (new datetime($result))->modify('-1 day')->format("Y-m-d");
-        } else
-            return $date;
-    }
-
-   
+       
    
 
 }

@@ -30,9 +30,10 @@ use App\Classes\Help;
 */
 
 
-/*  login Controller
+
+/*  Index Controller
  *  Written by Harout Koja
- *  Date 3/Jul/2016
+ *  Date 20/Apr/2017
  *  Updated by
  *  Date
 */
@@ -41,45 +42,10 @@ Route::resource('auth/login', 'LoginController');
 
 /*  Index Controller
  *  Written by Harout Koja
- *  Date 1/Jun/2016
+ *  Date 20/Apr/2017
  *  Updated by
  *  Date
 */
 Route::resource('/', 'IndexController');
 
 
-/*  Job Controller
- *  Written by Harout Koja
- *  Date 15/Jun/2016
- *  Updated by
- *  Date
-*/
-Route::resource('jobs', 'JobController');
-
-
-/*  Employee Controller
- *  Written by Harout Koja
- *  Date 20/Jun/2016
- *  Updated by
- *  Date
-*/
-Route::resource('employees', 'EmployeeController');
-
-
-/*  Languages Controller
- *  Written by Harout Koja
- *  Date 27/Jun/2016
- *  Updated by
- *  Date
-*/
-Route::resource('languages', 'LanguagesController');
-
-
-
-/*  Ajax Controller
- *  Written by Harout Koja
- *  Date 15/Jul/2016
- *  Updated by
- *  Date
-*/
-Route::resource('ajax', 'AjaxController');

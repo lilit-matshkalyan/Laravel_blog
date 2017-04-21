@@ -4,9 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Language extends Model
+class OrderItems extends Model
 {
     // Table Structure
-    protected $table = 'langages';
+    protected $table = 'orders_items';
     protected $primaryKey = 'id';
 }

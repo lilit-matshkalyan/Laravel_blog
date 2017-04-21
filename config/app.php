@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'timezone' => 'Asia/Riyadh',
+    'timezone' => 'Asia/Yerevan',
 
     /*
     |--------------------------------------------------------------------------
@@ -78,7 +78,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY', 'UMqsAfTFmsuN9pw0JDHGuJMQdd1qTOiX'),
+    'key' => env('APP_KEY', 'C7XuZQfduS0U2Wff12UxkuxwtRxc85gw'),
 
     'cipher' => 'AES-256-CBC',
 
@@ -142,14 +142,8 @@ return [
         App\Providers\RouteServiceProvider::class,
 	    Illuminate\Html\HtmlServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
-        Maatwebsite\Excel\ExcelServiceProvider::class,
-        Barryvdh\DomPDF\ServiceProvider::class,
         App\Providers\HelperServiceProvider::class,
-        Chumper\Zipper\ZipperServiceProvider::class,
-        // This Laravel 5 package creates a backup of your application files.
-        Spatie\Backup\BackupServiceProvider::class,
-        // This Laravel 5 package creates a backup of your application database.
-        BackupManager\Laravel\Laravel5ServiceProvider::class,
+
 
     ],
 
@@ -201,10 +195,7 @@ return [
         'Html'      => Illuminate\Html\HtmlFacade::class,
         'Form'      => Illuminate\Html\FormFacade::class,
         'Image'     => Intervention\Image\Facades\Image::class,
-        'Excel'     => Maatwebsite\Excel\Facades\Excel::class,
-        'PDF'       => Barryvdh\DomPDF\Facade::class,
         'Help'      => App\Classes\Help::class,
-        'Zipper'    => Chumper\Zipper\Zipper::class
 
 
     ],

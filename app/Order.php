@@ -4,11 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EmployeeContract extends Model
+class Order extends Model
 {
     // Table Structure
-    protected $table = 'employees_contracts';
+    protected $table = 'orders';
     protected $primaryKey = 'id';
-
-
 }

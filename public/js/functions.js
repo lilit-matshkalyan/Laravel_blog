@@ -1,31 +1,7 @@
 
-/*  form notification posission */
-var stack_bottomright = {"dir1": "up", "dir2": "left", "firstpos1": 15, "firstpos2": 15};
 
 
-/* positive integral numberr
-$(document).ready(function() {
-    $('.number').keyup(function() {
-        var error ='Please enter a valid number.';
-        var value = $(this).val();
-        if(value.indexOf('.') >= 0 || value.indexOf('-') >= 0)
-            $(this).val(value.slice(0, -1));
-    });
-});
- /*
-
-/* positive integral numberr
-$(document).ready(function() {
-    $('.text').keyup(function() {
-        var error ='Please enter a valid text.';
-        var value = $(this).val();
-        if(value.indexOf('=') >= 0 || value.indexOf('>') >= 0 || value.indexOf('<') >= 0 )
-            $(this).val(value.slice(0, -1));
-    });
-});
-
-
-/* show image thumbnail before upload with jQuery
+// show image thumbnail before upload with jQuery
 $(function() {
     $("#uploadFile").on("change", function(){
         var files = !!this.files ? this.files : [];
@@ -43,4 +19,3 @@ $(function() {
     });
 });
 
-*/

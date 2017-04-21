@@ -17,7 +17,7 @@
 
 @page{size:a4; margin:10px}
 @media print{
-    a, button, .noprint, {
+    a, button, .noprint {
         display: none;
     }    
 }
