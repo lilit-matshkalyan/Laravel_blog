@@ -25,17 +25,17 @@ class Company extends Model implements AuthenticatableContract, CanResetPassword
 
     public function category()
     {
-        return $this->hasMany('App\Category', 'company_id', 'id');
+        return $this->hasMany('App\Category', 'company_id');
     }
 
     public function location()
     {
-        return $this->hasMany('App\Location', 'company_id', 'id');
+        return $this->hasMany('App\Location', 'company_id');
     }
 
     public function users_companies()
     {
-        return $this->hasMany('App\UserCompany', 'company_id', 'id');
+        return $this->hasMany('App\UserCompany', 'company_id');
     }
 
 }

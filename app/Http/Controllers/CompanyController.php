@@ -75,10 +75,6 @@ class CompanyController extends Controller
         // return company full details
         $company = Company::find($id);
 
-        $company['category']        =  $company->category;
-        $company['location']        =  $company->location;
-        $company['users_companies'] =  $company->users_companies;
-
         return  response()->json($company);
 
     }
