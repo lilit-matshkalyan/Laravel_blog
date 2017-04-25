@@ -22,4 +22,10 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      */
     protected $table = 'users';
 
+
+    public function users_companies()
+    {
+        return $this->hasMany('App\UserCompany', 'user_id', 'id');
+    }
+
 }

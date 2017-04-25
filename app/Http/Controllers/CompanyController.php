@@ -3,15 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Auth;
-use App\Classes\Help;
+
+use App\Company;
 
 
 
 
-class LanguagesController extends Controller
+
+class CompanyController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -20,7 +19,18 @@ class LanguagesController extends Controller
      */
     public function index()
     {
-        //
+        /*  Index view
+         *  Written by Harout Koja
+         *  Date 21/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        // return companies  list
+        $companies = Company::all();
+
+        return  response()->json($companies);
+
     }
 
     /**
@@ -31,6 +41,7 @@ class LanguagesController extends Controller
     public function create()
     {
         //
+
     }
 
     /**
@@ -39,9 +50,10 @@ class LanguagesController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         //
+
     }
 
     /**
@@ -52,20 +64,21 @@ class LanguagesController extends Controller
      */
     public function show($id)
     {
-        /*  Languages main page
+        /*  Index view
          *  Written by Harout Koja
-         *  Date 27/Jun/2016
+         *  Date 25/Apr/2017
          *  Updated by
          *  Date
         */
 
-        // Make session for current language
-        if($id == 'rtl')
-            session(['lang' => '-rtl']);
-        else
-            session(['lang' => '']);
+        // return company full details
+        $company = Company::find($id);
 
-        return Redirect::back();
+        $company['category']        =  $company->category;
+        $company['location']        =  $company->location;
+        $company['users_companies'] =  $company->users_companies;
+
+        return  response()->json($company);
 
     }
 
@@ -78,6 +91,7 @@ class LanguagesController extends Controller
     public function edit($id)
     {
         //
+
     }
 
 
@@ -88,9 +102,10 @@ class LanguagesController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(Request $request, $id)
+    public function update(UserRequest $request, $id)
     {
         //
+
     }
 
     /**
@@ -105,9 +120,5 @@ class LanguagesController extends Controller
 
     }
 
-
-    public function __construct() {
-        $this->middleware('auth');
-    }
 
 }

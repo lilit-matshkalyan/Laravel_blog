@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use PhpImap\Mailbox as ImapMailbox;
-use PhpImap\IncomingMail;
-use PhpImap\IncomingMailAttachment;
 use Illuminate\Support\Facades\Paginator;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Auth;
@@ -47,5 +44,15 @@ Route::resource('auth/login', 'LoginController');
  *  Date
 */
 Route::resource('/', 'IndexController');
+
+
+
+/*  Company Controller
+ *  Written by Harout Koja
+ *  Date 21/Apr/2017
+ *  Updated by
+ *  Date
+*/
+Route::resource('companies', 'CompanyController');
 
 
