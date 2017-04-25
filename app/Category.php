@@ -12,17 +12,17 @@ class Category extends Model
 
     public function company()
     {
-        return $this->belongsTo('App\Company', 'company_id', 'id');
-    }
-
-    public function parent()
-    {
-        return $this->belongsTo('App\Category', 'parent_id','id');
+        return $this->belongsTo('App\Company', 'company_id');
     }
 
     public function children()
     {
-        return $this->hasMany('App\Category', 'parent_id','id');
+        return $this->hasMany('App\Category', 'parent_id');
+    }
+
+    public function products()
+    {
+        return $this->hasMany('App\Product', 'category_id');
     }
 
 }
