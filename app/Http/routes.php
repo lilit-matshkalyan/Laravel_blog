@@ -75,3 +75,12 @@ Route::resource('categories', 'CategoryController');
 Route::resource('locations', 'LocationController');
 
 
+/*  Location Controller
+ *  Written by Harout Koja
+ *  Date 25/Apr/2017
+ *  Updated by
+ *  Date
+*/
+Route::resource('users', 'UserController');
+
+

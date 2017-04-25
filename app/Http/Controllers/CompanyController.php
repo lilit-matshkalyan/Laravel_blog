@@ -65,7 +65,7 @@ class CompanyController extends Controller
      */
     public function show($id)
     {
-        /*  Index view
+        /*  Show view
          *  Written by Harout Koja
          *  Date 25/Apr/2017
          *  Updated by

@@ -1,15 +1,13 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\User;
-use Hash;
+
 use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Paginator;
-use App\Http\Requests\UserRequest;
-use App\Classes\Help;
+
+use App\User;
+
+
 
 
 
@@ -20,12 +18,42 @@ class UserController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-        $users = User::all('user_id','user_name','type','created_at');
-        return  view('user.index',['users'=>$users,'user'=>Help::me()]);
+        /*  Index view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        // get current company id
+        $company_id = $request->input('company_id');
+
+        // return users list
+        $users  = User::all();
+
+        $users_filt= [];
+        $i=0;
+        foreach ($users as $user)
+            foreach ($user->users_companies as $company)
+                if($company->company_id == $company_id){
+                    $users_filt[$i]['id'] = $user['id'];
+                    $users_filt[$i]['username'] = $user['username'];
+                    $users_filt[$i]['first_name'] = $user['first_name'];
+                    $users_filt[$i]['last_name'] = $user['last_name'];
+                    $users_filt[$i]['email'] = $user['email'];
+                    $users_filt[$i]['address'] = $user['address'];
+                    $users_filt[$i]['created_at'] = $user['created_at'];
+                    $users_filt[$i]['updated_at'] = $user['updated_at'];
+                    $i++;
+                }
+
+        return  response()->json($users_filt);
+
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -35,7 +63,7 @@ class UserController extends Controller
     public function create()
     {
         //
-        return Redirect::to('user');
+
     }
 
     /**
@@ -44,15 +72,10 @@ class UserController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
         //
-        $user = new User;
-        $user->user_name = $request->input('user_name');
-        $user->password = Hash::make($request->input('password'));
-        $user->type = $request->input('type');
-        $user->save();
-        return Redirect::to('user');
+
     }
 
     /**
@@ -63,8 +86,15 @@ class UserController extends Controller
      */
     public function show($id)
     {
-        //
-        return Redirect::to('user');
+        /*  Show view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+
+
     }
 
     /**
@@ -76,7 +106,7 @@ class UserController extends Controller
     public function edit($id)
     {
         //
-        return Redirect::to('user');
+
     }
 
 
@@ -87,15 +117,10 @@ class UserController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(UserRequest $request, $id)
+    public function update(Request $request, $id)
     {
         //
-        $user  = User::find($id);
-        $user->user_name = $request->input('user_name');
-        $user->password = Hash::make($request->input('password'));
-        $user->type = $request->input('type');
-        $user->save();
-        return Redirect::to('user');
+
     }
 
     /**
@@ -107,12 +132,8 @@ class UserController extends Controller
     public function destroy($id)
     {
         //
-        $user = User::find($id);
-        $user->delete();
-        return Redirect::to('user');
+
     }
 
-    public function __construct() {
-        $this->middleware('auth');
-    }
+
 }
