@@ -56,3 +56,13 @@ Route::resource('/', 'IndexController');
 Route::resource('companies', 'CompanyController');
 
 
+
+/*  Category Controller
+ *  Written by Harout Koja
+ *  Date 25/Apr/2017
+ *  Updated by
+ *  Date
+*/
+Route::resource('categories', 'CategoryController');
+
+

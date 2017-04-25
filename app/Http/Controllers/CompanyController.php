@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Company;
@@ -50,7 +51,7 @@ class CompanyController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
         //
 
@@ -102,7 +103,7 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(UserRequest $request, $id)
+    public function update(Request $request, $id)
     {
         //
 

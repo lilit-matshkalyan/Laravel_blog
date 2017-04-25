@@ -2,63 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Auth;
-use App\Classes\Help;
 
 use App\Category;
-use App\Company;
 
 
 
 
 
-class IndexController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         /*  Index view
          *  Written by Harout Koja
-         *  Date 20/Apr/2017
+         *  Date 25/Apr/2017
          *  Updated by
          *  Date
         */
 
+        // get current company id
+        $company_id = $request->input('company_id');
 
-        //  return categories with company
-        $categories = Category::all();
+        // return root categories list
+        $categories = Category::where('company_id', $company_id)->whereNull('parent_id')->get();
 
         $i=0;
         foreach($categories as $item){
-            $categories[$i]['company'] = $item->company;
+            $categories[$i]['children'] =  $item->children;
             $i++;
         }
 
         return  response()->json($categories);
 
-
-
-
-        // return companies with categories
-        $companies = Company::all();
-
-        $i=0;
-        foreach($companies as $item){
-            $companies[$i]['category'] =  $item->category;
-            $i++;
-        }
-
-        return  response()->json($companies);
-
-
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -77,7 +62,7 @@ class IndexController extends Controller
      * @param  Request  $request
      * @return Response
      */
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
         //
 
@@ -91,7 +76,19 @@ class IndexController extends Controller
      */
     public function show($id)
     {
-        //
+        /*  Index view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        // return category full details
+        $category = Category::find($id);
+
+        $category['children'] = $category->children;
+
+        return  response()->json($category);
 
     }
 
@@ -115,7 +112,7 @@ class IndexController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function update(UserRequest $request, $id)
+    public function update(Request $request, $id)
     {
         //
 
