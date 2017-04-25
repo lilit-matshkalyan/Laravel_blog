@@ -14,4 +14,9 @@ class Location extends Model
     {
         return $this->belongsTo('App\Company', 'company_id', 'id');
     }
+
+    public function order()
+    {
+        return $this->hasMany('App\Order', 'location_id', 'id');
+    }
 }

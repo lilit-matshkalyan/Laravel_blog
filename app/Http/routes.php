@@ -66,3 +66,12 @@ Route::resource('companies', 'CompanyController');
 Route::resource('categories', 'CategoryController');
 
 
+/*  Location Controller
+ *  Written by Harout Koja
+ *  Date 25/Apr/2017
+ *  Updated by
+ *  Date
+*/
+Route::resource('locations', 'LocationController');
+
+
