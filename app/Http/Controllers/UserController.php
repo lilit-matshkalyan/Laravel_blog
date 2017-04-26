@@ -35,9 +35,10 @@ class UserController extends Controller
 
         $users_filt= [];
         $i=0;
-        foreach ($users as $user)
-            foreach ($user->users_companies as $company)
-                if($company->company_id == $company_id){
+        foreach ($users as $user) {
+            foreach ($user->users_companies as $company) {
+                $user->orders;
+                if ($company->company_id == $company_id) {
                     $users_filt[$i]['id'] = $user['id'];
                     $users_filt[$i]['username'] = $user['username'];
                     $users_filt[$i]['first_name'] = $user['first_name'];
@@ -46,8 +47,15 @@ class UserController extends Controller
                     $users_filt[$i]['address'] = $user['address'];
                     $users_filt[$i]['created_at'] = $user['created_at'];
                     $users_filt[$i]['updated_at'] = $user['updated_at'];
+                    $users_filt[$i]['users_companies'] = $user['users_companies'];
+                    $users_filt[$i]['orders'] = $user['orders'];
                     $i++;
                 }
+            }
+        }
+
+
+
 
         return  response()->json($users_filt);
 
@@ -92,6 +100,10 @@ class UserController extends Controller
          *  Updated by
          *  Date
         */
+
+        $user = User::find($id);
+
+        return  response()->json($user);
 
 
 

@@ -12,12 +12,12 @@ class UserCompany extends Model
 
     public function company()
     {
-        return $this->belongsTo('App\Company', 'company_id', 'id');
+        return $this->belongsTo('App\Company', 'company_id');
     }
 
     public function user()
     {
-        return $this->belongsTo('App\User', 'user_id', 'id');
+        return $this->belongsTo('App\User', 'user_id');
     }
 
 }

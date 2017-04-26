@@ -25,7 +25,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     public function users_companies()
     {
-        return $this->hasMany('App\UserCompany', 'user_id', 'id');
+        return $this->hasMany('App\UserCompany', 'user_id');
+    }
+
+    public function orders()
+    {
+        return $this->hasMany('App\Order', 'user_id');
     }
 
 }
