@@ -33,6 +33,13 @@ class LocationController extends Controller
         // return locations list
         $locations = Location::where('company_id', $company_id)->get();
 
+        foreach ($locations as $item){
+            $item->order;
+            foreach ($item->order as $item2){
+                $item2->orderitem;
+            }
+        }
+
         return  response()->json($locations);
 
     }
@@ -77,14 +84,10 @@ class LocationController extends Controller
          *  Date
         */
 
-        // return category full details
+        // return locations full details
         $location = Location::find($id);
 
-        $location['order'] = $location->order;
-
-        foreach ($location['order'] as $item){
-            $item['orderitem'] = $item->orderitem;
-        }
+        $location->company;
 
         return  response()->json($location);
 

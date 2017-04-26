@@ -12,11 +12,11 @@ class Location extends Model
 
     public function company()
     {
-        return $this->belongsTo('App\Company', 'company_id', 'id');
+        return $this->belongsTo('App\Company', 'company_id');
     }
 
     public function order()
     {
-        return $this->hasMany('App\Order', 'location_id', 'id');
+        return $this->hasMany('App\Order', 'location_id');
     }
 }
