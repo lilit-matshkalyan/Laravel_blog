@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Redirect;
-use Request;
+
+use Illuminate\Http\Request;
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
 use App\Classes\Help;
-use Auth;
-use Session;
+
+
+
 
 class LoginController extends Controller
 {
@@ -21,18 +21,14 @@ class LoginController extends Controller
     {
 
 
-        /*  login form view
+        /*  login Index view
          *  Written by Harout Koja
-         *  Date 3/Jul/2016
+         *  Date 26/Apr/2016
          *  Updated by
          *  Date
         */
         
-        if(Auth::check())
-            return Redirect::to('/');
-        else{
-            return view('auth/login',['company'=>Help::company()]);
-        }
+        return 1;
     }
 
     /**
@@ -43,6 +39,7 @@ class LoginController extends Controller
     public function create()
     {
         //
+        return 2;
     }
 
     /**
@@ -54,28 +51,8 @@ class LoginController extends Controller
     public function store(Request $request)
     {
 
-        /*  login info check
-         *  Written by Harout Koja
-         *  Date 3/Jul/2016
-         *  Updated by
-         *  Date
-        */
-        
-        // check log in user and password
-        $username  = Request::input('username');
-        $password   = Request::input('password');
-
-        if(Auth::attempt(['username'=>$username,'password'=>$password,'status'=>1])){
-            // old url
-            $old_url  = Session::get('url')['intended'];
-            if($old_url)
-                return ['data'=>$old_url];
-            else
-                return  ['data'=>url('/')];
-        }
-        else{
-            return  Help::languages('Wrong username or password');
-        }
+        //
+        return 3;
     }
 
     /**
@@ -86,17 +63,8 @@ class LoginController extends Controller
      */
     public function show($id)
     {
-        /*  login  session close 
-         *  Written by Harout Koja
-         *  Date 3/Jul/2016
-         *  Updated by
-         *  Date
-        */
-        
-        Auth::logout();
-        Session::flush();
-
-        return Redirect::to('auth/login');
+        //
+        return 4;
     }
 
     /**
@@ -108,6 +76,7 @@ class LoginController extends Controller
     public function edit($id)
     {
         //
+        return 5;
     }
 
     /**
@@ -120,6 +89,7 @@ class LoginController extends Controller
     public function update(Request $request, $id)
     {
         //
+        return 6;
     }
 
     /**
@@ -131,5 +101,6 @@ class LoginController extends Controller
     public function destroy($id)
     {
         //
+        return 7;
     }
 }

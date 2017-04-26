@@ -32,30 +32,7 @@ class IndexController extends Controller
         */
 
 
-        //  return categories with company
-        $categories = Category::all();
-
-        $i=0;
-        foreach($categories as $item){
-            $categories[$i]['company'] = $item->company;
-            $i++;
-        }
-
-        return  response()->json($categories);
-
-
-
-
-        // return companies with categories
-        $companies = Company::all();
-
-        $i=0;
-        foreach($companies as $item){
-            $companies[$i]['category'] =  $item->category;
-            $i++;
-        }
-
-        return  response()->json($companies);
+        return  response()->json();
 
 
     }

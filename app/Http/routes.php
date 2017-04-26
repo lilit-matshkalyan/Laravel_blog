@@ -34,12 +34,12 @@ use App\Classes\Help;
  *  Updated by
  *  Date
 */
-Route::resource('auth/login', 'LoginController');
+Route::resource('api/login', 'LoginController');
 
 
-/*  Index Controller
+/*  Login Controller
  *  Written by Harout Koja
- *  Date 20/Apr/2017
+ *  Date 26/Apr/2017
  *  Updated by
  *  Date
 */
@@ -53,7 +53,7 @@ Route::resource('/', 'IndexController');
  *  Updated by
  *  Date
 */
-Route::resource('companies', 'CompanyController');
+Route::resource('api/companies', 'CompanyController');
 
 
 
@@ -63,7 +63,7 @@ Route::resource('companies', 'CompanyController');
  *  Updated by
  *  Date
 */
-Route::resource('categories', 'CategoryController');
+Route::resource('api/categories', 'CategoryController');
 
 
 /*  Location Controller
@@ -72,7 +72,7 @@ Route::resource('categories', 'CategoryController');
  *  Updated by
  *  Date
 */
-Route::resource('locations', 'LocationController');
+Route::resource('api/locations', 'LocationController');
 
 
 /*  Location Controller
@@ -81,7 +81,7 @@ Route::resource('locations', 'LocationController');
  *  Updated by
  *  Date
 */
-Route::resource('users', 'UserController');
+Route::resource('api/users', 'UserController');
 
 
 /*  Orders Controller
@@ -90,5 +90,5 @@ Route::resource('users', 'UserController');
  *  Updated by
  *  Date
 */
-Route::resource('orders', 'OrderController');
+Route::resource('api/orders', 'OrderController');
 

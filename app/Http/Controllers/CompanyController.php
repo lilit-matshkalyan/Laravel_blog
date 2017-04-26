@@ -30,7 +30,7 @@ class CompanyController extends Controller
         */
 
         // return companies  list
-        $companies = Company::all();
+        $companies = Company::select('username','name','email','address','tel','website','image')->get();
 
         return  response()->json($companies);
 
