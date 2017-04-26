@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 
 
-
+use App\Classes\Help;
 use App\Company;
+use App\User;
 
 
 
@@ -20,7 +21,7 @@ class CompanyController extends Controller
      *
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
         /*  Index view
          *  Written by Harout Koja
@@ -29,8 +30,11 @@ class CompanyController extends Controller
          *  Date
         */
 
+        $request->input('limit') ? $limit = $request->input('limit') :  $limit = 10 ;
+        $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;
+
         // return companies  list
-        $companies = Company::select('username','name','email','address','tel','website','image')->get();
+        $companies = Company::select('name','email','address','tel','website','image')->limit($limit)->offset($offset)->get();
 
         return  response()->json($companies);
 
@@ -55,7 +59,36 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*  store view
+          *  Written by Harout Koja
+          *  Date 25/Apr/2017
+          *  Updated by
+          *  Date
+         */
+
+        // check for root admin
+        $token = $request->input('token');
+        $user = User::where('remember_token',$token)->where('id',0)->first();
+
+        if($user) {
+            $company = new Company;
+            $company->username = $request->input('username');
+            $company->password = $request->input('password');
+            $company->email = $request->input('email');
+            $company->name = $request->input('name');
+            $company->address = $request->input('address');
+            $company->image = $request->input('image');
+            $company->tel = $request->input('tel');
+            $company->website = $request->input('website');
+            $company->license_key = Help::license_key();
+            $company->from_date = $request->input('from_date');
+            $company->to_date = $request->input('to_date');
+            $company->save();
+
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
 
     }
 
@@ -65,7 +98,7 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
         /*  Show view
          *  Written by Harout Koja
@@ -74,10 +107,17 @@ class CompanyController extends Controller
          *  Date
         */
 
-        // return company full details
-        $company = Company::find($id);
+        // check for root admin
+        $token = $request->input('token');
+        $user = User::where('remember_token',$token)->where('id',0)->first();
 
-        return  response()->json($company);
+        if($user) {
+            // return company full details
+            $company = Company::find($id);
+            return response()->json($company);
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
 
     }
 
@@ -103,7 +143,36 @@ class CompanyController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
+        // check for root admin
+        $token = $request->input('token');
+        $user = User::where('remember_token',$token)->where('id',0)->first();
+
+        if($user) {
+            $company = Company::find($id);
+
+            if($request->input('from_date') && $request->input('to_date')){
+                $company->license_key = Help::license_key();
+                $company->from_date = $request->input('from_date');
+                $company->to_date = $request->input('to_date');
+            }
+            else {
+                $company->username = $request->input('username');
+                $company->password = $request->input('password');
+                $company->email = $request->input('email');
+                $company->name = $request->input('name');
+                $company->address = $request->input('address');
+                $company->image = $request->input('image');
+                $company->tel = $request->input('tel');
+                $company->website = $request->input('website');
+            }
+
+            $company->save();
+
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
 
     }
 

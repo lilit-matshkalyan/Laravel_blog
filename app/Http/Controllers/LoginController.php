@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Classes\Help;
 
 
+use App\User;
 
 
 class LoginController extends Controller
@@ -51,8 +52,26 @@ class LoginController extends Controller
     public function store(Request $request)
     {
 
-        //
-        return 3;
+        /*  login store view
+         *  Written by Harout Koja
+         *  Date 26/Apr/2016
+         *  Updated by
+         *  Date
+        */
+
+        $username = $request->input('username');
+        $password = $request->input('password');
+        $remember_token = $request->input('token');
+
+        $user = User::where('username',$username)->where('password',$password)->first();
+
+        if($user){
+            $user->remember_token = $remember_token;
+            $user->save();
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'Invalid username or password']);
     }
 
     /**
@@ -98,9 +117,25 @@ class LoginController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
-        return 7;
+        /*  login destroy view
+         *  Written by Harout Koja
+         *  Date 26/Apr/2016
+         *  Updated by
+         *  Date
+        */
+
+        $remember_token = $request->input('token');
+
+        $user = User::where('remember_token',$remember_token)->first();
+
+        if($user){
+            $user->remember_token = null;
+            $user->save();
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'Please login first']);
     }
 }
