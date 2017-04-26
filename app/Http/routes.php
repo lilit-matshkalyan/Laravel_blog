@@ -84,3 +84,11 @@ Route::resource('locations', 'LocationController');
 Route::resource('users', 'UserController');
 
 
+/*  Orders Controller
+ *  Written by Harout Koja
+ *  Date 26/Apr/2017
+ *  Updated by
+ *  Date
+*/
+Route::resource('orders', 'OrderController');
+

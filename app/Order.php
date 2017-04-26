@@ -12,11 +12,16 @@ class Order extends Model
 
     public function location()
     {
-        return $this->belongsTo('App\Location', 'location_id', 'id');
+        return $this->belongsTo('App\Location', 'location_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo('App\User', 'user_id');
     }
 
     public function orderitem()
     {
-        return $this->hasMany('App\OrderItems', 'order_id', 'id');
+        return $this->hasMany('App\OrderItems', 'order_id');
     }
 }
