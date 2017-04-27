@@ -5,7 +5,7 @@
       <webServer id="8d2a5467-3a6b-4fc8-a63b-c559b9c9e7a2" name="apush" url="http://megaprogramming.com">
         <fileTransfer host="megaprogramming.com" port="21" rootFolder="/public_html/orderapp" password="dfc2dffbdfd9dfffdfc5df98df9fdffadfc0df92dfe4dfc6dff8dfd3dfefdf9f" username="megatex">
           <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" passiveMode="true" showHiddenFiles="true" />
+            <advancedOptions compatibilityMode="true" dataProtectionLevel="Private" passiveMode="true" showHiddenFiles="true" />
           </advancedOptions>
           <option name="port" value="21" />
         </fileTransfer>

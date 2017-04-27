@@ -154,6 +154,7 @@ class CompanyController extends Controller
                 $company->license_key = Help::license_key();
                 $company->from_date = $request->input('from_date');
                 $company->to_date = $request->input('to_date');
+                $company->motherboard_key = null;
             }
             else {
                 $company->username = $request->input('username');
