@@ -68,9 +68,8 @@ class CompanyController extends Controller
 
         // check for root admin
         $token = $request->input('token');
-        $user = User::where('remember_token',$token)->where('id',0)->first();
 
-        if($user) {
+        if(Help::root_user($token)) {
             $company = new Company;
             $company->username = $request->input('username');
             $company->password = $request->input('password');
@@ -108,10 +107,9 @@ class CompanyController extends Controller
         */
 
         // check for root admin
-        $token = $request->input('token');
-        $user = User::where('remember_token',$token)->where('id',0)->first();
+        $token = $request->input('token');        
 
-        if($user) {
+        if(Help::root_user($token)) {
             // return company full details
             $company = Company::find($id);
             return response()->json($company);
@@ -146,9 +144,8 @@ class CompanyController extends Controller
 
         // check for root admin
         $token = $request->input('token');
-        $user = User::where('remember_token',$token)->where('id',0)->first();
 
-        if($user) {
+        if(Help::root_user($token)) {
             $company = Company::find($id);
 
             if($request->input('from_date') && $request->input('to_date')){

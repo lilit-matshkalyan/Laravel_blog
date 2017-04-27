@@ -2,13 +2,7 @@
 
 namespace App\Classes;
 
-use App\Http\Requests;
-use Auth;
-use Illuminate\Support\Facades\Hash;
-use Datetime;
-use Request;
-use Redirect;
-use DB;
+use App\User;
 
 
 class Help
@@ -51,6 +45,16 @@ class Help
         }
         return $str;
     }
+
+
+    public static function root_user($token){
+
+        return  User::where('remember_token',$token)->where('id',0)->first();
+
+    }
+
+
+
    
        
    
