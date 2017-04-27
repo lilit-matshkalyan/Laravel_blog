@@ -9,6 +9,8 @@ use App\Http\Requests;
 use App\Classes\Help;
 use App\Company;
 use App\User;
+use Carbon\Carbon;
+
 
 
 
@@ -172,6 +174,39 @@ class CompanyController extends Controller
             return response()->json(['Error'=>'Out of your users permission range']);
 
     }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Request  $request
+     * @param  int  $id
+     * @return Response
+     */
+    public function install(Request $request, $id)
+    {
+
+        $license_key = $request->input('license_key');
+        $motherboard_key = $request->input('motherboard_key');
+
+        $licence = Company::where('license_key',$license_key)->whereNull('motherboard_key')->
+                   whereDate('from_date','<=',Carbon::today()->toDateString())->whereDate('to_date','>=',Carbon::today()->toDateString())->first();
+
+        if($licence){
+            $install =  Company::where('license_key',$license_key)->first();
+            $install->motherboard_key = $motherboard_key;
+            $install->save();
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'License not valid or expired']);
+
+    }
+
+
+
+
+
 
     /**
      * Remove the specified resource from storage.

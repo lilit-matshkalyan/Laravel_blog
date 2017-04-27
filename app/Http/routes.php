@@ -54,7 +54,7 @@ Route::resource('/', 'IndexController');
  *  Date
 */
 Route::resource('api/companies', 'CompanyController');
-
+Route::put('api/companies/{id}/install', 'CompanyController@install');
 
 
 /*  Category Controller
