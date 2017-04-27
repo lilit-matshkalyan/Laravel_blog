@@ -206,6 +206,71 @@ class CompanyController extends Controller
 
 
 
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  Request  $request
+     * @return Response
+     */
+    public function login(Request $request)
+    {
+        /*  login view
+          *  Written by Harout Koja
+          *  Date 25/Apr/2017
+          *  Updated by
+          *  Date
+         */
+
+        $username = $request->input('username');
+        $password = $request->input('password');
+        $motherboard_key = $request->input('motherboard_key');
+        $token = $request->input('token');
+
+        $company = Company::where('username',$username)->where('password',$password)->where('motherboard_key',$motherboard_key)->
+                   whereDate('from_date','<=',Carbon::today()->toDateString())->whereDate('to_date','>=',Carbon::today()->toDateString())->first();
+
+        if($company){
+            $company->remember_token = $token;
+            $company->save();
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'Invalid username or password']);
+
+
+    }
+
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function logout(Request $request)
+    {
+        /*  login destroy view
+         *  Written by Harout Koja
+         *  Date 26/Apr/2016
+         *  Updated by
+         *  Date
+        */
+        $remember_token = $request->input('token');
+
+        $company = Company::where('remember_token',$remember_token)->first();
+
+        if($company){
+            $company->remember_token = null;
+            $company->save();
+            return response()->json(['Message'=>'Success']);
+        }
+        else
+            return response()->json(['Error'=>'Please login first']);
+    }
+
+
+
+
 
 
 
