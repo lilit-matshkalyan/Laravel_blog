@@ -111,7 +111,7 @@ class CompanyController extends Controller
         // check for root admin
         $token = $request->input('token');        
 
-        if(Help::root_user($token)) {
+        if(Help::root_user($token) or Help::admin_user($token) == $id) {
             // return company full details
             $company = Company::find($id);
             return response()->json($company);
