@@ -94,3 +94,11 @@ Route::resource('api/users', 'UserController');
 */
 Route::resource('api/orders', 'OrderController');
 
+
+/*  Orders Controller
+ *  Written by Harout Koja
+ *  Date 28/Apr/2017
+ *  Updated by
+ *  Date
+*/
+Route::resource('api/products', 'ProductController');

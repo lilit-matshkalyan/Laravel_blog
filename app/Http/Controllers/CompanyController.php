@@ -8,7 +8,6 @@ use App\Http\Requests;
 
 use App\Classes\Help;
 use App\Company;
-use App\User;
 use Carbon\Carbon;
 
 
@@ -111,7 +110,7 @@ class CompanyController extends Controller
         // check for root admin
         $token = $request->input('token');        
 
-        if(Help::root_user($token) or Help::admin_user($token) == $id) {
+        if(Help::root_user($token)) {
             // return company full details
             $company = Company::find($id);
             return response()->json($company);
