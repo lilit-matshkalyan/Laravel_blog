@@ -9,6 +9,7 @@ use App\Http\Requests;
 use App\Classes\Help;
 use App\Company;
 use Carbon\Carbon;
+use Mail;
 
 
 
@@ -143,6 +144,13 @@ class CompanyController extends Controller
     public function update(Request $request, $id)
     {
 
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
         // check for root admin
         $token = $request->input('token');
 
@@ -154,8 +162,9 @@ class CompanyController extends Controller
                 $company->from_date = $request->input('from_date');
                 $company->to_date = $request->input('to_date');
                 $company->motherboard_key = null;
+                $company->remember_token = null;
             }
-            else {
+            elseif($request->input('username') && $request->input('password')) {
                 $company->username = $request->input('username');
                 $company->password = $request->input('password');
                 $company->email = $request->input('email');
@@ -165,9 +174,10 @@ class CompanyController extends Controller
                 $company->tel = $request->input('tel');
                 $company->website = $request->input('website');
             }
+            else
+                return response()->json(['Error'=>'Out of your users permission range']);
 
             $company->save();
-
             return response()->json(['Message'=>'Success']);
         }
         else
@@ -265,6 +275,49 @@ class CompanyController extends Controller
         }
         else
             return response()->json(['Error'=>'Please login first']);
+    }
+
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Request  $request
+     * @param  int  $id
+     * @return Response
+     */
+    public function reset(Request $request, $id)
+    {
+
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        $company = Company::where('email',$request->input('email'))->where('motherboard_key',$request->input('motherboard_key'))->first();
+
+        if($company){
+            $password =  Help::license_key(8);
+            $company->password = $password;
+
+            $emails =  $company->email;
+            $body = 'Your account new password is  &nbsp; '.$password;
+            Mail::send([], [], function($message) use ($emails,$body)
+            {
+                $message->to($emails)->subject('Account New Password')->setBody($body, 'text/html');
+            });
+
+            $company->save();
+            return response()->json(['Message'=>'Success']);
+        }
+        else{
+            return response()->json(['Error'=>'Invalid Email']);
+        }
+
+
+
     }
 
 
