@@ -58,6 +58,7 @@ Route::put('api/companies/{id}/install', 'CompanyController@install');
 Route::post('api/companies/login', 'CompanyController@login');
 Route::delete('api/companies/login/logout', 'CompanyController@logout');
 Route::put('api/companies/{id}/reset', 'CompanyController@reset');
+Route::put('api/companies/{id}/change', 'CompanyController@change');
 
 
 /*  Category Controller

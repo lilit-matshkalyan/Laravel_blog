@@ -172,7 +172,7 @@ class CompanyController extends Controller
                 $company->address = $request->input('address');
                 $company->image = $request->input('image');
                 $company->tel = $request->input('tel');
-                $company->website = $request->input('website');
+                $company->website = $request->input('website');                     
             }
             else
                 return response()->json(['Error'=>'Out of your users permission range']);
@@ -315,14 +315,36 @@ class CompanyController extends Controller
         else{
             return response()->json(['Error'=>'Invalid Email']);
         }
+    }
+
+
+    public function change(Request $request, $id)
+    {
+
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))){
+
+            $company = Company::where('password',$request->input('password'))->where('id',$company_id)->first();
+
+            if($company){
+                $company->password = $request->input('new_password');
+                $company->save();
+                return response()->json(['Message'=>'Success']);
+            }
+            return response()->json(['Error'=>'Invalid Password']);
+
+        }
+        return response()->json(['Error'=>'Out of your users permission range']);
 
 
 
     }
-
-
-
-
 
 
 
