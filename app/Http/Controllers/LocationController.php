@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
+use Help;
 use App\Location;
 
 
@@ -27,20 +28,16 @@ class LocationController extends Controller
          *  Date
         */
 
-        // get current company id
-        $company_id = $request->input('company_id');
+        if($company_id = Help::admin_user($request->input('token'))) {
 
-        // return locations list
-        $locations = Location::where('company_id', $company_id)->get();
+            // return locations list
+            $locations = Location::where('company_id', $company_id)->get();
 
-        foreach ($locations as $item){
-            $item->order;
-            foreach ($item->order as $item2){
-                $item2->orderitem;
-            }
+            return response()->json($locations);
         }
-
-        return  response()->json($locations);
+        else{
+            return response()->json(['Error'=>'Out of your users permission range']);
+        }
 
     }
 
@@ -65,7 +62,35 @@ class LocationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*  store view
+         *  Written by Harout Koja
+         *  Date 28/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $location = Location::where('qr_code',$request->input('qr_code'))->first();
+
+            if($location) {
+                return response()->json(['Error' => 'QR Code must be unique']);
+            }
+            else {
+
+                $locations = new Location;
+                $locations->company_id = $company_id;
+                $locations->qr_code = $request->input('qr_code');
+                $locations->name = $request->input('name');
+                $locations->address = $request->input('address');
+                $locations->save();
+
+                return response()->json(['Message' => 'Success']);
+            }
+        }
+        else{
+            return response()->json(['Error'=>'Out of your users permission range']);
+        }
 
     }
 
@@ -115,7 +140,35 @@ class LocationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 28/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $location = Location::where('qr_code',$request->input('qr_code'))->where('id','!=',$id)->first();
+
+            if($location) {
+                return response()->json(['Error' => 'QR Code must be unique']);
+            }
+            else {
+
+                $locations = Location::find($id);
+                $locations->company_id = $company_id;
+                $locations->qr_code = $request->input('qr_code');
+                $locations->name = $request->input('name');
+                $locations->address = $request->input('address');
+                $locations->save();
+
+                return response()->json(['Message' => 'Success']);
+            }
+        }
+        else{
+            return response()->json(['Error'=>'Out of your users permission range']);
+        }
 
     }
 
