@@ -3,6 +3,7 @@
 namespace App\Classes;
 
 use App\User;
+use App\Company;
 
 
 class Help
@@ -51,6 +52,14 @@ class Help
 
         return  User::where('remember_token',$token)->where('id',0)->first();
 
+    }
+
+
+    public static function admin_user($token){
+
+        $company = Company::where('remember_token',$token)->first();
+
+        return  @$company->id;
     }
 
 

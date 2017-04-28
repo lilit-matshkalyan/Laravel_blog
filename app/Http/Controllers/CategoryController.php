@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
+use Help;
 use App\Category;
 
 
@@ -80,7 +81,30 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*  store view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $request->input('parent_id') > 0 ? $parent_id = $request->input('parent_id') : $parent_id = null;
+
+            $category = new Category;
+            $category->name = $request->input('name');
+            $category->image = $request->input('image');
+            $category->parent_id = $parent_id;
+            $category->company_id = $company_id;
+            $category->save();
+
+            return response()->json(['Message'=>'Success']);
+        }
+        else{
+            return response()->json(['Error'=>'Invalid username or password']);
+        }
+
 
     }
 
@@ -101,8 +125,6 @@ class CategoryController extends Controller
 
         // return root categories list
         $categories = Category::find($id);
-
-        $categories->company;
 
         return  response()->json($categories);
 
@@ -130,7 +152,28 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 25/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $request->input('parent_id') > 0 ? $parent_id = $request->input('parent_id') : $parent_id = null;
+
+            $category = Category::find($id);
+            $category->name = $request->input('name');
+            $category->image = $request->input('image');
+            $category->parent_id = $parent_id;
+            $category->save();
+
+            return response()->json(['Message'=>'Success']);
+        }
+        else{
+            return response()->json(['Error'=>'Invalid username or password']);
+        }
 
     }
 
