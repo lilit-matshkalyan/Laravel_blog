@@ -7,6 +7,7 @@ use App\Http\Requests;
 
 use App\Classes\Help;
 use App\User;
+use App\UserCompany;
 
 
 
@@ -95,7 +96,38 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*  store view
+         *  Written by Harout Koja
+         *  Date 29/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $user = new User;
+            $user->username = $request->input('username');
+            $user->password = $request->input('password');
+            $user->first_name = $request->input('first_name');
+            $user->last_name = $request->input('last_name');
+            $user->email = $request->input('email');
+            $user->tel = $request->input('tel');
+            $user->address = $request->input('address');
+            $user->save();
+
+            $status = new UserCompany;
+            $status->user_id = $user->id;
+            $status->company_id = $company_id;
+            $request->input('approved') == 1 ? $status->approved = $request->input('approved') : $status->approved = null;
+            $request->input('vip') == 1 ? $status->vip  = $request->input('vip') : $status->vip  = null;
+            $status->save();
+
+            return response()->json(['Message'=>'Success']);
+
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
+
 
     }
 
@@ -105,7 +137,7 @@ class UserController extends Controller
      * @param  int  $id
      * @return Response
      */
-    public function show($id)
+    public function show(Request $request,$id)
     {
         /*  Show view
          *  Written by Harout Koja
@@ -114,9 +146,22 @@ class UserController extends Controller
          *  Date
         */
 
-        $user = User::find($id);
+        if($company_id = Help::admin_user($request->input('token'))) {
 
-        return  response()->json($user);
+            $user = User::find($id);
+            $status= User::find($id);
+
+            foreach ($status->users_companies as $status)
+                if ($status->company_id == $company_id) {
+                    $user['company_id'] = $status->company_id;
+                    $user['approved'] = $status->approved;
+                    $user['vip'] = $status->vip;
+                }
+
+            return response()->json($user);
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
 
 
 
@@ -144,7 +189,41 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 29/Apr/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $status = UserCompany::where('user_id',$id)->where('company_id',$company_id)->first();
+
+            if($status) {
+
+                $request->input('approved') == 1 ? $status->approved = $request->input('approved') : $status->approved = null;
+                $request->input('vip') == 1 ? $status->vip = $request->input('vip') : $status->vip = null;
+                $status->save();
+
+                $user = User::find($id);
+                $user->username = $request->input('username');
+                $user->password = $request->input('password');
+                $user->first_name = $request->input('first_name');
+                $user->last_name = $request->input('last_name');
+                $user->email = $request->input('email');
+                $user->tel = $request->input('tel');
+                $user->address = $request->input('address');
+                $user->save();
+
+                return response()->json(['Message' => 'Success']);
+            }
+            else
+                return response()->json(['Error'=>'Out of your users permission range']);
+
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
 
     }
 
