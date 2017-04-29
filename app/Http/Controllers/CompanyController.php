@@ -36,7 +36,7 @@ class CompanyController extends Controller
         $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;
 
         // return companies  list
-        $companies = Company::select('id','name','email','address','tel','website','image')->limit($limit)->offset($offset)->get();
+        $companies = Company::select('id','name','email','address','tel','website','image')->limit($limit)->offset($offset*$limit)->get();
 
         return  response()->json($companies);
 

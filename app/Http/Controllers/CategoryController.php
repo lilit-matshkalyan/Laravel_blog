@@ -31,8 +31,11 @@ class CategoryController extends Controller
         // get current company id
         $company_id = $request->input('company_id');
 
+        $request->input('limit') ? $limit = $request->input('limit') :  $limit = 10 ;
+        $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;        
+
         // return root categories list
-        $categories = Category::where('company_id', $company_id)->whereNull('parent_id')->get();
+        $categories = Category::where('company_id', $company_id)->whereNull('parent_id')->limit($limit)->offset($offset*$limit)->get();
 
         if(isset($categories))
         foreach($categories as $item){

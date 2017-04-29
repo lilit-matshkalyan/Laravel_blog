@@ -30,8 +30,11 @@ class LocationController extends Controller
 
         if($company_id = Help::admin_user($request->input('token'))) {
 
+            $request->input('limit') ? $limit = $request->input('limit') :  $limit = 10 ;
+            $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;
+
             // return locations list
-            $locations = Location::where('company_id', $company_id)->get();
+            $locations = Location::where('company_id', $company_id)->limit($limit)->offset($offset*$limit)->get();
 
             return response()->json($locations);
         }
