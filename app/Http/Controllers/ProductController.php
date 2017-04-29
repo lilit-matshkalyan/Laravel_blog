@@ -32,7 +32,7 @@ class ProductController extends Controller
         $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;
 
         // return products  list
-        $product = Product::where('category_id',$category_id)->limit($limit)->offset($offset)->get();
+        $product = Product::where('category_id',$category_id)->limit($limit)->offset($offset*$limit)->get();
 
         return  response()->json($product);
 
