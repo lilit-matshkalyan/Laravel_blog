@@ -58,9 +58,7 @@ class UserController extends Controller
                                 $users_filt[$i]['company_id'] = $status->company_id;
                                 $users_filt[$i]['approved'] = $status->approved;
                                 $users_filt[$i]['vip'] = $status->vip;
-                            }
-                        $users_filt[$i]['created_at'] = $user['created_at'];
-                        $users_filt[$i]['updated_at'] = $user['updated_at'];
+                            }                   
                         $i++;
                     }
                 }
