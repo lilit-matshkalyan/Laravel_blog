@@ -7,7 +7,7 @@ use App\Http\Requests;
 
 use Help;
 use App\Category;
-
+use App\Location;
 
 
 
@@ -28,8 +28,16 @@ class CategoryController extends Controller
          *  Date
         */
 
-        // get current company id
-        $company_id = $request->input('company_id');
+        if($request->input('company_id')) {
+            // get current company id
+            $company_id = $request->input('company_id');
+        }
+        elseif($request->input('qr_code')){
+            // get current company id
+            $location =  Location::where('qr_code',$request->input('qr_code'))->first();
+            @$company_id = $location->company_id;
+        }
+   
 
         $request->input('limit') ? $limit = $request->input('limit') :  $limit = 10 ;
         $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;        

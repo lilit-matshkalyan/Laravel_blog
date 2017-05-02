@@ -200,7 +200,7 @@ class CompanyController extends Controller
         $motherboard_key = $request->input('motherboard_key');
 
         $licence = Company::where('license_key',$license_key)->whereNull('motherboard_key')->
-                   whereDate('from_date','<=',Carbon::today()->toDateString())->whereDate('to_date','>=',Carbon::today()->toDateString())->first();
+                   whereDate('from_date','<=',Carbon::today()->toDateString())->whereDate('to_date','>=',Carbon::today()->toDateString())->orWhere('motherboard_key',$motherboard_key)->first();
 
         if($licence){
             $install =  Company::where('license_key',$license_key)->first();
