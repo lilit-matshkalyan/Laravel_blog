@@ -74,6 +74,47 @@ class LoginController extends Controller
             return response()->json(['Error'=>'Invalid username or password']);
     }
 
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(Request $request)
+    {
+
+        /*  login store view
+         *  Written by Harout Koja
+         *  Date 02/May/2016
+         *  Updated by
+         *  Date
+        */
+
+        $user= User::where('username',$request->input('username'))->first();
+        if($user)
+            return response()->json(['Error' => 'username Code must be unique']);
+        $user= User::where('email',$request->input('email'))->first();
+        if($user)
+            return response()->json(['Error' => 'email Code must be unique']);
+
+        $user = new User;
+
+        $user->username = $request->input('username');
+        $user->password = $request->input('password');
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
+        $user->email = $request->input('email');
+        $user->tel = $request->input('tel');
+        $user->address = $request->input('address');
+        $user->save();
+
+
+
+        return response()->json(['Message'=>'Success']);
+
+    }
+
     /**
      * Display the specified resource.
      *

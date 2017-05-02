@@ -35,6 +35,7 @@ use App\Classes\Help;
  *  Date
 */
 Route::resource('api/login', 'LoginController');
+Route::post('api/register', 'LoginController@register');
 
 
 /*  Login Controller

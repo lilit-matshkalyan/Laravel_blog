@@ -108,16 +108,20 @@ class CompanyController extends Controller
          *  Date
         */
 
-        // check for root admin
-        $token = $request->input('token');        
+        if($token = $request->input('token')) {
 
-        if(Help::root_user($token)  ||  Help::admin_user($token)) {
-            // return company full details
-            $company = Company::find($id);
+            if (Help::root_user($token) || Help::admin_user($token) == $id) {
+                // return company full details
+                $company = Company::find($id);
+                return response()->json($company);
+            } else
+                return response()->json(['Error' => 'Out of your users permission range']);
+
+        }
+        else{
+            $company = Company::select('id','name','email','address','tel','website','image')->where('id',$id)->first();
             return response()->json($company);
         }
-        else
-            return response()->json(['Error'=>'Out of your users permission range']);
 
     }
 
