@@ -9,6 +9,7 @@ use App\Classes\Help;
 
 
 use App\User;
+use Mail;
 
 
 class LoginController extends Controller
@@ -121,10 +122,24 @@ class LoginController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        //
-        return 4;
+        /*  login show view
+         *  Written by Harout Koja
+         *  Date 03/May/2016
+         *  Updated by
+         *  Date
+        */
+
+        $user = User::where('remember_token',$request->input('token'))->first();
+
+        if($user){
+            return response()->json($user);
+            }
+        else {
+            return response()->json(['Error' => 'Out of your users permission range']);
+        }
+
     }
 
     /**
@@ -148,8 +163,52 @@ class LoginController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        return 6;
+
+        /*  login destroy view
+         *  Written by Harout Koja
+         *  Date 26/Apr/2016
+         *  Updated by
+         *  Date
+        */
+
+        // reset password
+        if ($request->input('email')) {
+
+            $user = User::where('email', $request->input('email'))->first();
+            if ($user) {
+                $password = Help::license_key(8);
+                $user->password = $password;
+
+                $emails = $user->email;
+                $body = 'Your account new password is  &nbsp; ' . $password;
+                Mail::send([], [], function ($message) use ($emails, $body) {
+                    $message->to($emails)->subject('Account New Password')->setBody($body, 'text/html');
+                });
+
+                $user->save();
+                return response()->json(['Message' => 'Success']);
+            }
+            else {
+                return response()->json(['Error' => 'Invalid Email']);
+            }
+
+        }
+        // change password
+        elseif($request->input('password') && $request->input('new_password')){
+
+            $user = User::where('password', $request->input('password'))->where('remember_token',$request->input('token'))->first();
+            if ($user) {
+                $user->password = $request->input('new_password');
+                $user->save();
+                return response()->json(['Message' => 'Success']);
+            }
+            else {
+                return response()->json(['Error' => 'Invalid Password']);
+            }
+
+
+        }
+
     }
 
     /**
