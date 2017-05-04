@@ -116,7 +116,14 @@ class LoginController extends Controller
         $user->address = $request->input('address');
         $user->save();
 
-
+        if($request->input('company_id')){
+            foreach ($request->input('company_id') as $i =>$item){
+                $status = new UserCompany();
+                $status->user_id = $user->id;
+                $status->company_id = $item;
+                $status->save();
+            }
+        }
 
         return response()->json(['Message'=>'Success']);
 
