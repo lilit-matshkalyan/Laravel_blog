@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\UserCompany;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Order;
-
+use App\User;
+use App\Location;
 
 
 
@@ -62,7 +64,44 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        /*  store view
+         *  Written by Harout Koja
+         *  Date 4/May/2017
+         *  Updated by
+         *  Date
+        */
+
+        $user = User::where('remember_token',$request->input('token'))->first();
+        $location = Location::where('qr_code',$request->input('qr_code'))->first();
+
+        $order = new Order;
+
+        if($user){
+            $vip = UserCompany::where('user_id',$user->id)->where('company_id',$request->input('company_id'))->where('vip',1)->first();
+            // normal user
+            if(!$vip){
+                if(!$location)
+                    return response()->json(['Error'=>'QR code is invalid']);
+                $order->location_id = $location->id;
+            }
+            $order->user_id = $user->id;
+        }
+        // guest
+        else{
+            $order->remember_token = $request->input('token');
+            if(!$location)
+                return response()->json(['Error'=>'QR code is invalid']);
+            $order->location_id = $location->id;
+        }
+
+        $order->count = $request->input('count');
+        $order->amount = $request->input('amount');
+        $order->comment = $request->input('comment');
+
+        $order->save();
+
+        return response()->json(['Message'=>'Success']);
+
 
     }
 
