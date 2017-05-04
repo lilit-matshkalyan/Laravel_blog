@@ -59,22 +59,20 @@ class CategoryController extends Controller
         foreach($categories as $item){
              $item->children;
 
-            if(isset($item))
-            foreach($item['children'] as $item2)
-                $item2->children;
+           if(isset($item))
+           foreach($item['children'] as $item2) {
+               $item2->children;
 
-                if(isset($item2) )
-                foreach($item2['children'] as $item3)
-                    $item3->children;
+               if (isset($item2))
+                   foreach ($item2['children'] as $item3) {
+                       $item3->children;
 
-                    if(isset($item3))
-                    foreach($item3['children'] as $item4)
-                        $item4->children;
-
-                        if(isset($item4))
-                        foreach($item4['children'] as $item5)
-                            $item5->children;
-
+                       if (isset($item3))
+                           foreach ($item3['children'] as $item4) {
+                               $item4->children;
+                           }
+                   }
+           }
         }
 
         return  response()->json($categories);
