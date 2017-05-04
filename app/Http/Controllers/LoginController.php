@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\UserCompany;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Classes\Help;
@@ -67,6 +68,11 @@ class LoginController extends Controller
         $user = User::where('username',$username)->where('password',$password)->first();
 
         if($user){
+            if($request->input('company_id')){
+                $vip = UserCompany::where('company_id',$request->input('company_id'))->where('user_id',$user->id)->where('vip',1)->first();
+                if(!$vip)
+                    return response()->json(['Error'=>'Your account is not VIP']);
+            }
             $user->remember_token = $remember_token;
             $user->save();
             return response()->json(['Message'=>'Success']);

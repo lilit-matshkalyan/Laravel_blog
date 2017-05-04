@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\UserCompany;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use Help;
 use App\Category;
 use App\Location;
+use App\User;
 
 
 
@@ -36,6 +38,14 @@ class CategoryController extends Controller
             // get current company id
             $location =  Location::where('qr_code',$request->input('qr_code'))->first();
             @$company_id = $location->company_id;
+        }
+
+        // check for user if approved or not
+        if($request->input('token')){
+            $user = User::where('remember_token',$request->input('token'))->first();
+            $approve = UserCompany::where('user_id',$user->id)->where('company_id',$company_id)->where('approved',1)->first();
+            if(!$approve)
+                return response()->json(['Error'=>'Your account not approved yet']);
         }
    
 
