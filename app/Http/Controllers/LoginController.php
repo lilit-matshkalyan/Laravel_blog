@@ -65,7 +65,7 @@ class LoginController extends Controller
         $password = $request->input('password');
         $remember_token = $request->input('token');
 
-        $user = User::where('username',$username)->where('password',$password)->first();
+        $user = User::select('id','username','first_name','last_name','email','tel','address')->where('username',$username)->where('password',$password)->first();
 
         if($user){
             if($request->input('company_id')){
@@ -75,7 +75,7 @@ class LoginController extends Controller
             }
             $user->remember_token = $remember_token;
             $user->save();
-            return response()->json(['Message'=>'Success']);
+            return response()->json($user);
         }
         else
             return response()->json(['Error'=>'Invalid username or password']);
