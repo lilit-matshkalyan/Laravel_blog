@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\UserCompany;
+
 use Illuminate\Http\Request;
 use App\Http\Requests;
 
 use App\Order;
 use App\User;
 use App\Location;
-
+use App\OrderItems;
+use App\UserCompany;
 
 
 
@@ -76,6 +77,7 @@ class OrderController extends Controller
 
         $order = new Order;
 
+        // normal and VIP user
         if($user){
             $vip = UserCompany::where('user_id',$user->id)->where('company_id',$request->input('company_id'))->where('vip',1)->first();
             // normal user
@@ -94,11 +96,21 @@ class OrderController extends Controller
             $order->location_id = $location->id;
         }
 
+        // for all
         $order->count = $request->input('count');
         $order->amount = $request->input('amount');
         $order->comment = $request->input('comment');
-
         $order->save();
+
+        foreach ($request->input('product_id') as $i => $item){
+          $orders_items = new OrderItems;
+            $orders_items->order_id = $order->id;
+            $orders_items->price = $request->input('price')[$i];
+            $orders_items->qty = $request->input('qty')[$i];
+            $orders_items->product_id = $request->input('product_id')[$i];
+          $orders_items->save();
+
+        }
 
         return response()->json(['Message'=>'Success']);
 
