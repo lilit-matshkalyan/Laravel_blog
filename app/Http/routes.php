@@ -87,7 +87,7 @@ Route::resource('api/locations', 'LocationController');
  *  Date
 */
 Route::resource('api/users', 'UserController');
-
+Route::put('api/users/status/{id}', 'UserController@status');
 
 /*  Orders Controller
  *  Written by Harout Koja

@@ -225,6 +225,45 @@ class UserController extends Controller
 
     }
 
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  Request  $request
+     * @param  int  $id
+     * @return Response
+     */
+    public function status(Request $request, $id)
+    {
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 5/May/2017
+         *  Updated by
+         *  Date
+        */
+
+        if($company_id = Help::admin_user($request->input('token'))) {
+
+            $status = UserCompany::where('company_id',$company_id)->where('user_id',$id)->first();
+
+            if($status){
+                $status->approved = $request->input('approved')==1 ? $request->input('approved') : Null ;
+                $status->vip = $request->input('vip')==1 ? $request->input('vip') : Null ;
+                $status->save();
+                return response()->json(['Message' => 'Success']);
+            }
+            else
+                return response()->json(['Error'=>'Out of your users permission range']);
+        }
+        else
+            return response()->json(['Error'=>'Out of your users permission range']);
+
+    }
+
+
+
+
     /**
      * Remove the specified resource from storage.
      *
