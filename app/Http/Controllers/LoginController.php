@@ -100,10 +100,10 @@ class LoginController extends Controller
 
         $user= User::where('username',$request->input('username'))->first();
         if($user)
-            return response()->json(['Error' => 'username Code must be unique']);
+            return response()->json(['Error' => 'username  must be unique']);
         $user= User::where('email',$request->input('email'))->first();
         if($user)
-            return response()->json(['Error' => 'email Code must be unique']);
+            return response()->json(['Error' => 'email  must be unique']);
 
         $user = new User;
 
