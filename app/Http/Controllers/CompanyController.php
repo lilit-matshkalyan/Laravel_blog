@@ -68,6 +68,14 @@ class CompanyController extends Controller
           *  Date
          */
 
+        $company = Company::where('username',$request->input('username'))->first();
+        if($company)
+            return response()->json(['Error'=>'username Code must be unique']);
+
+        $company = Company::where('email',$request->input('email'))->first();
+        if($company)
+            return response()->json(['Error'=>'email Code must be unique']);
+
         // check for root admin
         $token = $request->input('token');
 
