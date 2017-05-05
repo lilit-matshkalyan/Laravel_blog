@@ -210,7 +210,7 @@ class CompanyController extends Controller
             $install =  Company::where('license_key',$license_key)->first();
             $install->motherboard_key = $motherboard_key;
             $install->save();
-            return response()->json(['Message'=>'Success','company_id'=>$install->id]);
+            return response()->json(['Message'=>'Success']);
         }
         else
             return response()->json(['Error'=>'License not valid or expired']);
@@ -245,7 +245,7 @@ class CompanyController extends Controller
         if($company){
             $company->remember_token = $token;
             $company->save();
-            return response()->json(['Message'=>'Success']);
+            return response()->json($company);
         }
         else
             return response()->json(['Error'=>'Invalid username or password']);
