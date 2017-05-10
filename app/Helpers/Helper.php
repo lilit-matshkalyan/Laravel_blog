@@ -63,6 +63,14 @@ class Help
     }
 
 
+    public static function system_user($token){
+
+        $user = User::where('remember_token',$token)->where('id','!=',0)->first();
+
+        return  @$user->id;
+    }
+
+
 
    
        

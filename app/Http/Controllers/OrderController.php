@@ -11,7 +11,7 @@ use App\User;
 use App\Location;
 use App\OrderItems;
 use App\UserCompany;
-
+use Help;
 
 
 class OrderController extends Controller
@@ -25,16 +25,36 @@ class OrderController extends Controller
     {
         /*  Index view
          *  Written by Harout Koja
-         *  Date 26/Apr/2017
+         *  Date 10/May/2017
          *  Updated by
          *  Date
         */
 
-        // get current user id
-        $user_id = $request->input('user_id');
+        // for company
+        if( $company_id = Help::admin_user($request->input('token')) ){
+            // return orders list
+            $orders = Order::where('company_id',$company_id)->whereNull('approved')->get();
+        }
+        // for normal user and vip user
+        elseif( $user_id = Help::system_user($request->input('token')) ){
+            // return orders list
+            $orders = Order::where('user_id',$user_id)->wherein('approved',[1,-1])->get();
+        }
+        // for guests
+        else{
+            // return orders list
+            $orders = Order::where('remember_token',$request->input('token'))->wherein('approved',[1,-1])->get();
+        }
 
-        // return orders list
-        $orders = Order::where('user_id', $user_id)->get();
+        if(empty($orders))
+            return  response()->json([]);
+
+        foreach ($orders as $item){
+            if($item->approved == 1)  { $item->approved = 2; $item->save(); }
+            if($item->approved == -1) { $item->approved = -2; $item->save(); }
+        }
+
+
 
         foreach ($orders as $item){
             $item->orderitem;
@@ -85,8 +105,14 @@ class OrderController extends Controller
                 if(!$location)
                     return response()->json(['Error'=>'QR code is invalid']);
                 $order->location_id = $location->id;
+                $order->company_id = $location->company_id;
+                $order->user_id = $user->id;
             }
-            $order->user_id = $user->id;
+            // VIP user
+            else{
+                $order->user_id = $user->id;
+                $order->company_id = $request->input('company_id');
+            }
         }
         // guest
         else{
@@ -94,6 +120,7 @@ class OrderController extends Controller
             if(!$location)
                 return response()->json(['Error'=>'QR code is invalid']);
             $order->location_id = $location->id;
+            $order->company_id = $location->company_id;
         }
 
         // for all
@@ -125,20 +152,7 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        /*  Show view
-         *  Written by Harout Koja
-         *  Date 26/Apr/2017
-         *  Updated by
-         *  Date
-        */
-
-        // return order full details
-        $order = Order::find($id);
-
-        $order->user;
-        $order->location;
-
-        return  response()->json($order);
+        //
 
     }
 
@@ -164,7 +178,30 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        /*  update view
+         *  Written by Harout Koja
+         *  Date 10/May/2017
+         *  Updated by
+         *  Date
+        */
+
+        if ($company_id =  Help::admin_user($request->input('token'))) {
+
+            //edit order status
+            $order = Order::where('company_id',$company_id)->where('id',$request->input('order_id'))->whereNull('approved')->first();
+
+            if($order){
+                $order->approved = $request->input('approved');
+                $order->comment = $request->input('comment');
+                $order->save();
+                return response()->json(['Message'=>'Success']);
+            }
+            else
+                return response()->json(['Error' => 'Out of your users permission range']);
+
+        }
+        else
+            return response()->json(['Error' => 'Out of your users permission range']);
 
     }
 
