@@ -192,6 +192,15 @@ class CompanyController extends Controller
             $company->save();
             return response()->json(['Message'=>'Success']);
         }
+        elseif($company_id = Help::admin_user($token)){
+
+            $company = Company::find($company_id);
+            $company->count = $request->input('count');
+            $company->amount = $request->input('amount');
+            $company->save();
+            return response()->json(['Message'=>'Success']);
+
+        }
         else
             return response()->json(['Error'=>'Out of your users permission range']);
 
