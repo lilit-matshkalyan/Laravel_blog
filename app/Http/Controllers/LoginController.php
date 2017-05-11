@@ -189,13 +189,11 @@ class LoginController extends Controller
 
             $user = User::where('email', $request->input('email'))->first();
             if ($user) {
-                $password = Help::license_key(8);
-                $user->password = $password;
-
+                
                 $emails = $user->email;
-                $body = 'Your account new password is  &nbsp; ' . $password;
+                $body = 'Your account  password is  &nbsp; ' . $user->password;
                 Mail::send([], [], function ($message) use ($emails, $body) {
-                    $message->to($emails)->subject('Account New Password')->setBody($body, 'text/html');
+                    $message->to($emails)->subject('Account Password')->setBody($body, 'text/html');
                 });
 
                 $user->save();
