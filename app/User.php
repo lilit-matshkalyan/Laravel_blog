@@ -1,11 +1,18 @@
 <?php
 
+
 namespace App;
-
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
-class User extends Model 
+
+class User extends Model implements AuthenticatableContract, CanResetPasswordContract
 {
+    use Authenticatable, CanResetPassword;    
+    protected $primaryKey = 'id';    /**
 
     protected $primaryKey = 'id';
 
@@ -17,14 +24,14 @@ class User extends Model
     protected $table = 'users';
 
 
-    public function users_companies()
+    public function posts()
     {
-        return $this->hasMany('App\UserCompany', 'user_id');
+        return $this->hasMany('App\Post', 'author_id');
     }
-
-    public function orders()
-    {
-        return $this->hasMany('App\Order', 'user_id');
-    }
-
+   
 }
+
+
+
+
+

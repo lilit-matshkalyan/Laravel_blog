@@ -2,209 +2,218 @@
 
 namespace App\Http\Controllers;
 
-use App\UserCompany;
-use Illuminate\Http\Request;
-use App\Http\Requests;
-
-use Help;
-use App\Category;
-use App\Location;
+use Auth;
 use App\User;
+use App\Post;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 
 
-
-class CategoryController extends Controller
+class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+
+
     public function index(Request $request)
     {
-        /*  Index view
-         *  Written by Harout Koja
-         *  Date 25/Apr/2017
-         *  Updated by
-         *  Date
-        */
 
-        if($request->input('company_id')) {
-            // get current company id
-            $company_id = $request->input('company_id');
-        }
-        elseif($request->input('qr_code')){
-            // get current company id
-            $location =  Location::where('qr_code',$request->input('qr_code'))->first();
-            @$company_id = $location->company_id;
-        }
+        $posts = Post::All();
 
-        // check for user if approved or not
-        if($request->input('token')){
-            $user = User::where('remember_token',$request->input('token'))->first();
-            $approve = UserCompany::where('user_id',$user->id)->where('company_id',$company_id)->where('approved',1)->first();
-            if(!$approve)
-                return response()->json(['Error'=>'Your account not approved yet']);
-        }
-   
-
-        $request->input('limit') ? $limit = $request->input('limit') :  $limit = 10 ;
-        $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;        
-
-        // return root categories list
-        $categories = Category::where('company_id', $company_id)->whereNull('parent_id')->limit($limit)->offset($offset*$limit)->get();
-
-        if(isset($categories))
-        foreach($categories as $item){
-             $item->children;
-
-           if(isset($item))
-           foreach($item['children'] as $item2) {
-               $item2->children;
-
-               if (isset($item2))
-                   foreach ($item2['children'] as $item3) {
-                       $item3->children;
-
-                       if (isset($item3))
-                           foreach ($item3['children'] as $item4) {
-                               $item4->children;
-                           }
-                   }
-           }
-        }
-
-        return  response()->json($categories);
+        return view('posts_list',['posts'=>$posts]);
 
     }
 
-
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
+    ////////***** add a post *****\\\\\\\\
+    ////////*****http://localhost/apush/*****\\\\\\\\
     public function create()
     {
-        //
+        //$users = User::All();
+
+        if (Auth::check())
+        {
+            // The user is logged in...
+            $user = Auth::user(); //User::find($id);
+            return view('post_add', ['user'=>$user]);
+        }
+
+        //return view('post_add',[/*'users'=>$users*/]);
+
+        //erb miayn login exatc mardik karoxanan avelacnel poster
+        //return view('post_add',[]);
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
+    ////////***** save added post *****\\\\\\\\
+    ////////*****http://localhost/apush/*****\\\\\\\\
     public function store(Request $request)
     {
-        /*  store view
-         *  Written by Harout Koja
-         *  Date 25/Apr/2017
-         *  Updated by
-         *  Date
+
+
+
+        $this->validate($request,[
+
+            'title' => 'required|min:6|max:50',
+            'content'  => 'required|min:30|max:1000',
+            //'confirm_password' => 'required|min:3|max:20|same:password',
+        ],[
+            'title.required' => ' The title field is required.',
+            'title.min'      => ' The title must be at least 6 characters.',
+            'title.max'      => ' The title may not be greater than 50 characters.',
+
+            'content.required'  => ' The content field is required.',
+            'content.min'       => ' The content must be at least 30 characters.',
+            'content.max'       => ' The content may not be greater than 1000 characters.',
+        ]);
+
+
+
+        /*$user = User::find($id);
+        $post = new post;
+        //$user =
+        $post->author_id = Auth::user()->id;
+        $post->title = $request->input('title');
+        $post->content = $request->input('content');
+
+        $post->save();
+        return Redirect::to ("posts"); //users/$user->id
+        */
+        $id = Auth::user()->id;
+        /*
+        //* chpetqakan bayc petqakan *\\
+        $currentuser = User::find($id);
+        $usergroup = $currentuser->user_group;
+        $group = Sentry::getGroupProvider()->findById($usergroup);
+
+        $generatedPassword = $this->_generatePassword(8,8);
+        $user = Sentry::register(array('email' => $input['email'], 'password' => $generatedPassword, 'user_group' => $usergroup));
+
+        $user->addGroup($group);
         */
 
-        if($company_id = Help::admin_user($request->input('token'))) {
 
-            $request->input('parent_id') > 0 ? $parent_id = $request->input('parent_id') : $parent_id = null;
+        $user = User::find($id);
+        $post = new post;
 
-            $category = new Category;
-            $category->name = $request->input('name');
-            $category->image = $request->input('image');
-            $category->parent_id = $parent_id;
-            $category->company_id = $company_id;
-            $category->save();
+        $post->author_id = $id;
+        //return $user;
+        $post->title = $request->input('title');
+        $post->content = $request->input('content');
+        $post->save();
 
-            return response()->json(['Message'=>'Success']);
-        }
-        else{
-            return response()->json(['Error'=>'Invalid username or password']);
-        }
+
+
+        return Redirect::to ("users/$user->id");
+
+
+
+        /*$username = $post->username;
+        $passwd = $post->author_id;
+        $pass = $passwd->password;
+
+        if ($pass == $request->input('password')) {
+            $post->save();
+            return Redirect::to ("posts");
+        } else {
+            //imap_alerts("Your password is incorrect to add a post");
+            return Redirect::to ("users");
+        }*/
 
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+
     public function show($id)
     {
-        /*  Show view
-         *  Written by Harout Koja
-         *  Date 25/Apr/2017
-         *  Updated by
-         *  Date
-        */
 
-        // return root categories list
-        $categories = Category::find($id);
+        $post = Post::Find($id);
+        $post->user;
+        return $post;
 
-        return  response()->json($categories);
 
+        //erb miayn login exatc mardik karoxanan avelacnel poster
+        /*$post = Post::Find($id);
+        return $post;*/
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+
     public function edit($id)
     {
-        //
+        
+        
+        $post = Post::find($id);
+        $users = User::All();
+        return view('post_edit', ['post' => $post, 'users'=>$users]); //'post' => $post, 'users'=>$users
+
+
+        $user = User::find($id);
+        return view('user_edit', ['user' => $user]);
+
+
+        //erb miayn login exatc mardik karoxanan avelacnel poster
+        /*$post = Post::find($id);
+      
+        return view('post_edit', ['post' => $post]);*/
 
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return Response
-     */
     public function update(Request $request, $id)
     {
-        /*  update view
-         *  Written by Harout Koja
-         *  Date 25/Apr/2017
-         *  Updated by
-         *  Date
-        */
 
-        if($company_id = Help::admin_user($request->input('token'))) {
+        $this->validate($request,[
 
-            $request->input('parent_id') > 0 ? $parent_id = $request->input('parent_id') : $parent_id = null;
+            'title' => 'required|min:6|max:35',
+            'content'  => 'required|min:35|max:1000',
+            //'confirm_password' => 'required|min:3|max:20|same:password',
+        ],[
+            'title.required' => ' The title field is required.',
+            'title.min'      => ' The title must be at least 6 characters.',
+            'title.max'      => ' The title may not be greater than 50 characters.',
 
-            $category = Category::find($id);
-            $category->name = $request->input('name');
-            $category->image = $request->input('image');
-            $category->parent_id = $parent_id;
-            $category->save();
+            'content.required'  => ' The content field is required.',
+            'content.min'       => ' The content must be at least 30 characters.',
+            'content.max'       => ' The content may not be greater than 1000 characters.',
+        ]);
+        
+        
+        $user_id = Auth::user();
+        //$user = User::find($id);
+        $post = Post::find($id);
 
-            return response()->json(['Message'=>'Success']);
-        }
-        else{
-            return response()->json(['Error'=>'Invalid username or password']);
-        }
+
+        //return $user;
+        $post->author_id = $user_id->id;
+        $post->title = $request->input('title');
+        $post->content = $request->input('content');
+        $post->save();
+
+
+
+        return Redirect::to ("users/$user_id->id");
+        
+
+        $user = User::find($id);
+        $user->firstname = $request->input('firstname');
+        $user->lastname = $request->input('lastname');
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        $user->email = $request->input('email');
+
+        $user->save();
+
+        return Redirect::to ("users/$user->id");
+        return "update | it works ";
 
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+
     public function destroy($id)
     {
-        //
+        $user_id = Auth::user()->id;
+        $post = Post::find($id);
+        $post->delete();
+        return Redirect::to ("users/$user_id");
 
     }
 

@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Http\Requests;
+//use App\Http\Hash;
 
-use App\Classes\Help;
+use Auth;
+use Hash;
+use Session;
+use GuzzleHttp\Client;
 use App\User;
-use App\UserCompany;
+use App\Post;
+use App\LogHistory;
+use App\CompanyInfo;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
 
 
 
@@ -15,274 +22,423 @@ use App\UserCompany;
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index(Request $request)
+    public function index()
     {
-        /*  Index view
-         *  Written by Harout Koja
-         *  Date 25/Apr/2017
-         *  Updated by
-         *  Date
-        */
 
 
-        if($company_id = Help::admin_user($request->input('token'))) {
+        /*$json = '{
+   "profiles":[
+      {
+         "id":"d2501196e8ed4d729b3727dc64989431",
+         "name":"infiniman"
+      }
+   ],
+   "size":1
+}';
+
+        $obj = json_decode($json);
+
+        return $obj->profiles[0]->id;*/
+
+/*
+        $client = new Client([
+            // Base URI is used with relative requests
+            'base_uri' => 'https://ipinfo.io/json',
+            // You can set any number of default request options.
+            'timeout'  => 2.0,
+        ]);
+        $obj = json_decode(json_encode( $client ), true );
+        //json_encode($client);
+
+        //echo $client . '(' . json_encode($obj )  . ');';
 
 
-            $request->input('limit') ? $limit = $request->input('limit') :  $limit = 10 ;
-            $request->input('offset') ? $offset = $request->input('offset')-1 :  $offset = 0;
+        echo $obj[0]['country'] ;
 
-            // return users list
-            $users = User::all();
+        //echo $_GET['jsoncallback'] . '(' . json_encode($answer )  . ');';
 
-            $users_filt = [];
-            $i = 0;
-            $j=0;
 
-            foreach ($users as $user) {
-                foreach ($user->users_companies as $company) {
-                    $user->orders;
-                    if ($company->company_id == $company_id && (++$j > $offset*$limit && $i < $limit) ) {
-                        $users_filt[$i]['id'] = $user['id'];
-                        $users_filt[$i]['username'] = $user['username'];
-                        $users_filt[$i]['first_name'] = $user['first_name'];
-                        $users_filt[$i]['last_name'] = $user['last_name'];
-                        $users_filt[$i]['email'] = $user['email'];
-                        $users_filt[$i]['address'] = $user['address'];
-                        foreach ($user['users_companies'] as $status)
-                            if ($status->company_id == $company_id) {
-                                $users_filt[$i]['company_id'] = $status->company_id;
-                                $users_filt[$i]['approved'] = $status->approved;
-                                $users_filt[$i]['vip'] = $status->vip;
-                            }                   
-                        $i++;
-                    }
-                }
-            }
 
-            return  response()->json($users_filt);
+
+
+        return $obj->country;
+        //print_r($client);
+*/
+
+        // Get IP address
+        $ip_address = "212.42.200.182"; //getenv('HTTP_CLIENT_IP') ?: getenv('HTTP_X_FORWARDED_FOR') ?: getenv('HTTP_X_FORWARDED') ?: getenv('HTTP_FORWARDED_FOR') ?: getenv('HTTP_FORWARDED') ?: getenv('REMOTE_ADDR');
+echo $ip_address;
+// Get JSON object
+        $jsondata = file_get_contents("http://timezoneapi.io/api/ip/?" . $ip_address);
+
+// Decode
+        $data = json_decode($jsondata, true);
+
+// Request OK?
+        if($data['meta']['code'] == '200'){
+
+            // Example: Get the city parameter
+            echo "City: " . $data['data']['country'] . "<br>";
+
+            // Example: Get the users time
+            echo "Time: " . $data['data']['datetime']['date_time_txt'] . "<br>";
 
         }
-        else
-            return response()->json(['Error'=>'Out of your users permission range']);
 
+        $users = User::All();
+
+        return view('user_list',['users'=>$users, ]);
 
     }
 
 
+    ////////*****user register*****\\\\\\\\
+    ////////*****http://localhost/apush/users/create*****\\\\\\\\
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        //$user = User::Find($id);
+        return view('user_register', []);
+        //return view('user_register', ['user' => $user]);
+
+        //return "UserController create";
+        /*if (Auth::attempt(['username'=>$request->input('username'),'password'=>$request->input('password')])) {
+            if (Auth::check())
+            {
+                // The user is logged in...
+                $user = Auth::user(); //User::find($id);
+                return view('user_account', ['user' => $user]);
+            }
+        }
+        else {
+            //
+        }*/
+        //return view('user_register',[]);
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Request  $request
-     * @return Response
-     */
+    ////////*****save user data register*****\\\\\\\\
+
     public function store(Request $request)
     {
-        /*  store view
-         *  Written by Harout Koja
-         *  Date 29/Apr/2017
-         *  Updated by
-         *  Date
-        */
 
-        $user = User::where('username',$request->input('username'))->first();
-        if($user)
-            return response()->json(['Error'=>'username  must be unique']);
+        $this->validate($request,[
 
-        $user = User::where('email',$request->input('email'))->first();
-        if($user)
-            return response()->json(['Error'=>'email  must be unique']);
+            'firstname' => 'required|min:6|max:255',
+            'lastname'  => 'required|min:6|max:255',
+            'username'  => 'required|min:6|max:255|unique:users',
+            'password'  => 'required|min:6|max:255',
+            'email'     => 'required',
+            //'confirm_password' => 'required|min:3|max:20|same:password',
+        ],[
+            'firstname.required' => ' The firstname field is required.',
+            'firstname.min'      => ' The firstname must be at least 6 characters.',
+            'firstname.max'      => ' The firstname may not be greater than 20 characters.',
 
-        if($company_id = Help::admin_user($request->input('token'))) {
+            'lastname.required'  => ' The lastname field is required.',
+            'lastname.min'       => ' The lastname must be at least 6 characters.',
+            'lastname.max'       => ' The lastname may not be greater than 30 characters.',
 
-            $user = new User;
+            'username.required'  => ' The username field is required.',
+            'username.min'       => ' The username must be at least 6 characters.',
+            'username.max'       => ' The username may not be greater than 20 characters.',
+            'username.unique'    => ' The username must be unique.',
+
+            'password.required'  => ' The password field is required.',
+            'password.min'       => ' The password must be at least 6 characters.',
+            'password.max'       => ' The password may not be greater than 20 characters.',
+
+            'email.required'     => ' The email field is required.',
+            'email.min'          => ' The email field must be like email.',
+        ]);
+
+
+        //dd('You are successfully added all fields.');
+
+        //return "UserController store";
+        $user = new user;
+        //$pass = new password;
+        $user->firstname = $request->input('firstname');
+        $user->lastname = $request->input('lastname');
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        //$user->password = Hash::make('secret');
+        //$pass = Hash::make('secret');
+
+        $user->email = $request->input('email');
+        $user->save();
+        //return Redirect::to ("users");
+        //return view('user_login', ['user' => $user]);
+
+        return Redirect::to ("auth/login");
+
+        /*
+        $data =  array(
+            $request->input('firstname'),
+            $request->input('lastname'),
+            $request->input('username'),
+            Hash::make($request->input('password')),
+            $request->input('email')
+        );
+
+        //$fileArray = ['image' => $file];
+        //$rules = ['image' => 'required|min:6|max:20'];
+        $validator = Validator::make($data, [
+            'firstname' => 'required|max:20',
+            'lastname'  => 'required|max:30',
+            'username'  => 'required|unique:users|max:20',
+            'password'  => 'recuired|confirmed|min:6',
+            'email'     => 'required|email|max:50',
+        ]);
+        if ($validator->fails()) {
+            return ['Error' => 'Invalid data'];
+        } else {
+            //return "UserController store";
+            $user = new user;
+            //$pass = new password;
+            $user->firstname = $request->input('firstname');
+            $user->lastname = $request->input('lastname');
             $user->username = $request->input('username');
-            $user->password = $request->input('password');
-            $user->first_name = $request->input('first_name');
-            $user->last_name = $request->input('last_name');
+            $user->password = Hash::make($request->input('password'));
+            //$user->password = Hash::make('secret');
+            //$pass = Hash::make('secret');
+
             $user->email = $request->input('email');
-            $user->tel = $request->input('tel');
-            $user->address = $request->input('address');
             $user->save();
+            //return Redirect::to ("users");
+            //return view('user_login', ['user' => $user]);
 
-            $status = new UserCompany;
-            $status->user_id = $user->id;
-            $status->company_id = $company_id;
-            $request->input('approved') == 1 ? $status->approved = $request->input('approved') : $status->approved = null;
-            $request->input('vip') == 1 ? $status->vip  = $request->input('vip') : $status->vip  = null;
-            $status->save();
-
-            return response()->json(['Message'=>'Success']);
 
         }
-        else
-            return response()->json(['Error'=>'Out of your users permission range']);
-
+        
+        */
+        
+        
+        
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show(Request $request,$id)
+    ////////***** user account page *****\\\\\\\\
+    ////////*****http://localhost/apush/users/userId*****\\\\\\\\
+    public function show(Request $request, $id)
     {
-        /*  Show view
-         *  Written by Harout Koja
-         *  Date 25/Apr/2017
-         *  Updated by
-         *  Date
+        //return "UserController show";
+
+        $user = User::Find($id);
+        $posts = Post::All();
+
+        //$allPost = Post::with('posts')->where('author_id', $id)->get();
+
+        $user = User::find($id);
+        $posts = Post::where("author_id", "=", $user->id)->get();
+
+        return view('user_account', ['user' => $user, 'posts' => $posts]);
+
+
+        return view('user_account', ['user' => $user, 'posts' => $allPost]); //$allPost;
+
+        //return Redirect::to ("users/".Auth::user()->id);
+
+
+
+
+
+        /*
+                $user = User::Find($id);
+
+                $userPosts = Post::whereHas('posts', function($query) use ($user) {
+                    return $query->where('author_id', $user->id);
+                })
+                    ->first();
+
+                $authUser = Auth::user();
+                $authLikedPosts = Post::whereHas('posts', function($query) use ($authUser) {
+                    return $query->where('author_id', $authUser->id);
+                })
+                    ->whereIn('id', $userPosts->lists('id'))
+                    ->first();
+
+                return view('user_account', ['user' => $user, 'posts' => $authLikedPosts]);
         */
 
-        if($company_id = Help::admin_user($request->input('token'))) {
+        //$author_id[] = $post->author_id;
 
-            $user = User::find($id);
-            $status= User::find($id);
+        /*$user = User::Find($id);
 
-            foreach ($status->users_companies as $status)
-                if ($status->company_id == $company_id) {
-                    $user['company_id'] = $status->company_id;
-                    $user['approved'] = $status->approved;
-                    $user['vip'] = $status->vip;
-                }
+        $userPosts = Post::whereHas('posts', function($query) use ($user) {
+            return $query->where('author_id', $user->id);
+        })
+            ->first();
 
-            return response()->json($user);
-        }
-        else
-            return response()->json(['Error'=>'Out of your users permission range']);
+        $authUser = Auth::user();
+        $authLikedPosts = Post::whereHas('posts', function($query) use ($authUser) {
+            return $query->where('author_id', $authUser->id);
+        })
+            ->whereIn('id', $userPosts->lists('id'))
+            ->first();
+
+        return view('user_account', ['user' => $user, 'posts' => $authLikedPosts]);*/
+
+        /*$user = User::Find($id);
+        $allPost = Post::with('posts')->where('author_id', $id)->first();
+        return view('user_account', ['user' => $user, 'posts' => $allPost]); //$allPost;*/
 
 
+
+
+
+        //$posts = Post::All();
+
+        //return view('posts_list',['posts'=>$posts]);
+
+        //return view('user_register', ['user' => $user]);
+
+        //return $user;
 
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+
+    ////////***** user data edit *****\\\\\\\\
+    ////////*****http://localhost/apush/users/userId/edit*****\\\\\\\\
+
     public function edit($id)
     {
-        //
+        //return "UserController edit";
+        $user = User::find($id);
+        return view('user_edit', ['user' => $user]);
 
     }
 
+    ////////***** save user data edit *****\\\\\\\\
+    ////////*****http://localhost/apush/users/userId*****\\\\\\\\
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return Response
-     */
     public function update(Request $request, $id)
     {
-        /*  update view
-         *  Written by Harout Koja
-         *  Date 29/Apr/2017
-         *  Updated by
-         *  Date
-        */
 
-        if($company_id = Help::admin_user($request->input('token'))) {
 
-            $status = UserCompany::where('user_id',$id)->where('company_id',$company_id)->first();
+        $this->validate($request,[
 
-            if($status) {
+            'firstname' => 'required|min:6|max:255',
+            'lastname'  => 'required|min:6|max:255',
+            //'username'  => 'required|min:6|max:255|unique:users,username'. $this->get('id') .',id',
+            'username'  => 'required|min:6|max:255|unique:users,username,'.$id.',id',
 
-                $request->input('approved') == 1 ? $status->approved = $request->input('approved') : $status->approved = null;
-                $request->input('vip') == 1 ? $status->vip = $request->input('vip') : $status->vip = null;
-                $status->save();
+            'password'  => 'required|min:6|max:255',
+            'email'     => 'required',
+            //'confirm_password' => 'required|min:3|max:20|same:password',
+        ],[
+            /*'firstname.required' => ' The firstname field is required.',
+            'firstname.min'      => ' The firstname must be at least 6 characters.',
+            'firstname.max'      => ' The firstname may not be greater than 20 characters.',
 
-                $user = User::find($id);
-                $user->username = $request->input('username');
-                $user->password = $request->input('password');
-                $user->first_name = $request->input('first_name');
-                $user->last_name = $request->input('last_name');
-                $user->email = $request->input('email');
-                $user->tel = $request->input('tel');
-                $user->address = $request->input('address');
-                $user->save();
+            'lastname.required'  => ' The lastname field is required.',
+            'lastname.min'       => ' The lastname must be at least 6 characters.',
+            'lastname.max'       => ' The lastname may not be greater than 30 characters.',
 
-                return response()->json(['Message' => 'Success']);
-            }
-            else
-                return response()->json(['Error'=>'Out of your users permission range']);
+            'username.required'  => ' The username field is required.',
+            'username.min'       => ' The username must be at least 6 characters.',
+            'username.max'       => ' The username may not be greater than 20 characters.',
+            'username.unique'    => ' The username must be unique.',
 
-        }
-        else
-            return response()->json(['Error'=>'Out of your users permission range']);
+            'password.required'  => ' The password field is required.',
+            'password.min'       => ' The password must be at least 6 characters.',
+            'password.max'       => ' The password may not be greater than 20 characters.',
+
+            'email.required'     => ' The email field is required.',
+            'email.min'          => ' The email field must be like email.',*/
+        ]);
+
+
+
+        //return "UserController update";
+        $user = User::find($id);
+        $user->firstname = $request->input('firstname');
+        $user->lastname = $request->input('lastname');
+        $user->username = $request->input('username');
+        $user->password = Hash::make($request->input('password'));
+        $user->email = $request->input('email');
+
+        $user->save();
+
+        return Redirect::to ("users/$user->id");
+        // http://localhost/apush/users/35 //////////////////////////////////////////////////////////////////////////////////////
+        //return Redirect::to ("users");
+        //return redirect()->route("index");
 
     }
 
+    ////////***** user login redirect from Login Controller store() *****\\\\\\\\
+    ////////*****http://localhost/apush/users/userId/edit*****\\\\\\\\
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request  $request
-     * @param  int  $id
-     * @return Response
-     */
     public function status(Request $request, $id)
     {
-        /*  update view
-         *  Written by Harout Koja
-         *  Date 5/May/2017
-         *  Updated by
-         *  Date
-        */
-
-        if($company_id = Help::admin_user($request->input('token'))) {
-
-            $status = UserCompany::where('company_id',$company_id)->where('user_id',$id)->first();
-
-            if($status){
-                $status->approved = $request->input('approved')==1 ? $request->input('approved') : Null ;
-                $status->vip = $request->input('vip')==1 ? $request->input('vip') : Null ;
-                $status->save();
-                return response()->json(['Message' => 'Success']);
-            }
-            else
-                return response()->json(['Error'=>'Out of your users permission range']);
-        }
-        else
-            return response()->json(['Error'=>'Out of your users permission range']);
+        //stugel petqa te che
+        return Redirect::to ("user_login");
 
     }
 
-
-
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+    //
+    // user jnjelu hamar, petq chi, "but" hanel //
+    //
     public function destroy($id)
     {
-        //
+        $user = User::find($id);
+        Session::flush($user);
+
+        return Redirect::to ("auth/login");
+
+        /*$user = User::find($id);
+        $user->delete();*/
+
+/*
+        $user = User::find($id);
+        $user->delete();
+
+
+        return Redirect::to ("users");
+*/
+        //$user->forceDelete();
+
+        //return Redirect::to ("users");
 
     }
 
+/*
+    public function __construct() {
+        $this->middleware('auth');
+
+
+        $this->middleware('auth');
+
+        $this->middleware('log', ['only' => [
+            'fooAction',
+            'barAction',
+        ]]);
+
+        $this->middleware('subscribed', ['except' => [
+            'fooAction',
+            'barAction',
+        ]]);
+    }
+*/
+/*    public function __construct() {
+        $this->middleware('auth');
+   
+   
+        $this->middleware('auth');
+
+        $this->middleware('log', ['only' => [
+            'fooAction',
+            'barAction',
+        ]]);
+
+        $this->middleware('subscribed', ['except' => [
+            'fooAction',
+            'barAction',
+        ]]);
+   
+   
+    }
+*/
 
 }

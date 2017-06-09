@@ -3,15 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Auth;
-use App\Classes\Help;
-
-use App\Category;
-use App\Company;
-
-
 
 
 
@@ -24,15 +15,9 @@ class IndexController extends Controller
      */
     public function index()
     {
-        /*  Index view
-         *  Written by Harout Koja
-         *  Date 20/Apr/2017
-         *  Updated by
-         *  Date
-        */
+        //
 
-
-        return  response()->json();
+        return  1;
 
 
     }
